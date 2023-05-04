@@ -9,45 +9,53 @@ namespace Abstraction_Distraction
 {
     abstract class Reg_Polyhedron
     {
-        protected int SideCount;
-        protected float SideLength;
-        protected int SC
+        protected int EdgeCount;
+        protected float EdgeLength;
+        protected int EC
         {
-            get { return SideCount; }
-            set { SideCount = value; }
+            get { return EdgeCount; }
+            set { EdgeCount = value; }
         }
-        protected float SL
+        protected float EL
         {
-            get { return SideLength; }
-            set { SideLength = value; }
+            get { return EdgeLength; }
+            set { EdgeLength = value; }
         }
-        internal Reg_Polyhedron(int SC, float SL)
+        internal Reg_Polyhedron(int EC, float EL)
         {
-            this.SC = SC;
-            this.SL = SL;
+            this.EC = EC;
+            this.EL = EL;
         }
+        internal abstract double FaceArea();
         internal abstract double SurfaceArea();
         internal abstract double Volume();
         public abstract string ValuesPrint();
     }
     class Tetrahedron : Reg_Polyhedron
     {
+        protected int SideCount = 4;
         protected double HL;
+        protected double TFA; // Tetrahedron Face Area
         protected double TSA; // Tetrahedron Surface Area
         protected double TV; // Tetrahedron Volume
-        internal Tetrahedron(int SC, float SL) : base(SC, SL)
+        internal Tetrahedron(int EC, float EL) : base(EC, EL)
         {
-            HL = Math.Sqrt(2)/ Math.Sqrt(3) * SL;
+            HL = EL * Math.Sqrt(2) / Math.Sqrt(3);
+            TFA = FaceArea();
             TSA = SurfaceArea();
             TV = Volume();
         }
+        internal override double FaceArea()
+        {
+            return Math.Pow(EL, 2) * (Math.Sqrt(3) / 4);
+        }
         internal override double SurfaceArea()
         {
-            return SC * Math.Pow(SL, 2) * (Math.Sqrt(3) / 4);
+            return SideCount * TFA;
         }
         internal override double Volume()
         {
-            return (HL * TSA)/(3 * SC);
+            return (HL * TFA) / 3;
         }
         public override string ValuesPrint()
         {
@@ -58,22 +66,29 @@ namespace Abstraction_Distraction
     }
     class Octahedron : Reg_Polyhedron
     {
+        protected int SideCount = 8;
         protected double HL;
+        protected double OFA;
         protected double OSA; // Tetrahedron Surface Area
         protected double OV; // Tetrahedron Volume
-        internal Octahedron(int SC, float SL) : base(SC, SL)
+        internal Octahedron(int EC, float EL) : base(EC, EL)
         {
-            HL = SL * Math.Sqrt(2) / Math.Sqrt(3);
+            HL = 2 * Math.Sqrt(2) * EL / Math.Sqrt(3);
+            OFA = FaceArea();
             OSA = SurfaceArea();
             OV = Volume();
         }
+        internal override double FaceArea()
+        {
+            return Math.Pow(EL, 2) * (Math.Sqrt(3) / 4);
+        }
         internal override double SurfaceArea()
         {
-            return SC * Math.Pow(SL, 2) * (Math.Sqrt(3) / 4);
+            return SideCount * OFA;
         }
         internal override double Volume()
         {
-            return (HL * OSA) / (3 * SC);
+            return 2 * (HL * OFA) / 3;
         }
         public override string ValuesPrint()
         {
@@ -84,20 +99,27 @@ namespace Abstraction_Distraction
     }
     class Cube : Reg_Polyhedron
     {
+        protected int SideCount = 6;
+        protected double CFA;
         protected double CSA; // Tetrahedron Surface Area
         protected double CV; // Tetrahedron Volume
-        internal Cube(int SC, float SL) : base(SC, SL)
+        internal Cube(int EC, float EL) : base(EC, EL)
         {
+            CFA = FaceArea();
             CSA = SurfaceArea();
             CV = Volume();
         }
+        internal override double FaceArea()
+        {
+            return Math.Pow(EL, 2);
+        }
         internal override double SurfaceArea()
         {
-            return SC * Math.Pow(SL, 2);
+            return SideCount * CFA;
         }
         internal override double Volume()
         {
-            return Math.Pow(SL, 3);
+            return Math.Pow(EL, 3);
         }
         public override string ValuesPrint()
         {
